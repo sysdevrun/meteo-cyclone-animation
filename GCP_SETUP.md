@@ -85,7 +85,8 @@ Go to your GitHub repository settings → Secrets and variables → Actions, and
 |-------------|-------------|---------|
 | `GCP_PROJECT_ID` | Your GCP project ID | `my-project-123` |
 | `GCP_REGION` | GCP region for deployment | `europe-west1` |
-| `GCS_BUCKET_NAME` | Name for the storage bucket | `meteo-cyclone-images` |
+| `GCS_BUCKET_NAME` | Name for the storage bucket | `sysdevrun-meteo-cyclone` |
+| `TFSTATE_BUCKET` | Terraform state bucket (optional) | `my-project-123-tfstate` |
 | `GCP_WORKLOAD_IDENTITY_PROVIDER` | Workload identity provider resource name | `projects/123.../providers/github-provider` |
 | `GCP_SERVICE_ACCOUNT` | Service account email | `github-actions@project.iam.gserviceaccount.com` |
 
@@ -93,11 +94,14 @@ Go to your GitHub repository settings → Secrets and variables → Actions, and
 
 ```bash
 # Create bucket for Terraform state
-gsutil mb -p $PROJECT_ID -l $REGION gs://meteo-cyclone-tfstate/
+export TFSTATE_BUCKET="${PROJECT_ID}-tfstate"
+gsutil mb -p $PROJECT_ID -l $REGION gs://$TFSTATE_BUCKET/
 
 # Enable versioning
-gsutil versioning set on gs://meteo-cyclone-tfstate/
+gsutil versioning set on gs://$TFSTATE_BUCKET/
 ```
+
+**Note**: The deployment is **idempotent** - you can run it multiple times safely without creating duplicate resources.
 
 ### 5. Deploy via GitHub Actions
 
@@ -124,10 +128,23 @@ gsutil versioning set on gs://meteo-cyclone-tfstate/
 
 After successful deployment, your website will be available at:
 ```
-https://storage.googleapis.com/YOUR-BUCKET-NAME/index.html
+https://storage.googleapis.com/sysdevrun-meteo-cyclone/index.html
 ```
 
 The URL will be printed at the end of the GitHub Actions workflow.
+
+## Idempotency
+
+The deployment is fully **idempotent**, meaning you can run it multiple times safely:
+
+- ✅ Terraform will only create resources that don't exist
+- ✅ Existing resources will be updated if configuration changes
+- ✅ No duplicate resources will be created
+- ✅ State is tracked in GCS bucket
+- ✅ Cloud Run job image updates won't trigger unnecessary changes
+- ✅ API services are enabled safely
+
+You can push to `main` branch as many times as needed without worrying about creating duplicate infrastructure.
 
 ## Manual Deployment (Alternative)
 
@@ -144,14 +161,21 @@ cp terraform.tfvars.example terraform.tfvars
 # Edit terraform.tfvars with your values
 nano terraform.tfvars
 
-# Initialize Terraform
-terraform init
+# Initialize Terraform with backend config
+export TFSTATE_BUCKET="${PROJECT_ID}-tfstate"
+terraform init -backend-config="bucket=$TFSTATE_BUCKET"
 
-# Plan infrastructure
-terraform plan
+# Plan infrastructure (idempotent - safe to run multiple times)
+terraform plan \
+  -var="project_id=$PROJECT_ID" \
+  -var="region=$REGION" \
+  -var="bucket_name=sysdevrun-meteo-cyclone"
 
-# Apply infrastructure
-terraform apply
+# Apply infrastructure (idempotent)
+terraform apply \
+  -var="project_id=$PROJECT_ID" \
+  -var="region=$REGION" \
+  -var="bucket_name=sysdevrun-meteo-cyclone"
 ```
 
 ### 2. Build and Deploy Docker Image

@@ -8,7 +8,7 @@ import { Storage } from '@google-cloud/storage';
 
 // Configuration
 const IMAGE_URL = 'http://www.meteo.fr/temps/domtom/La_Reunion/webcmrs9.0/francais/tpsreel/trajectoire.png';
-const BUCKET_NAME = process.env.GCS_BUCKET_NAME || 'meteo-cyclone-images';
+const BUCKET_NAME = process.env.GCS_BUCKET_NAME || 'sysdevrun-meteo-cyclone';
 const LOCAL_TEMP_DIR = '/tmp/images';
 const JSON_FILE = 'images.json';
 

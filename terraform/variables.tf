@@ -12,5 +12,5 @@ variable "region" {
 variable "bucket_name" {
   description = "Name of the GCS bucket for images and website"
   type        = string
-  default     = "meteo-cyclone-images"
+  default     = "sysdevrun-meteo-cyclone"
 }

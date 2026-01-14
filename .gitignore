@@ -23,4 +23,6 @@ terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 terraform/*.tfvars
 !terraform/*.tfvars.example
+terraform/backend.tfvars
+!terraform/backend.tfvars.example
 terraform/tfplan

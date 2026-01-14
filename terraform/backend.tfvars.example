@@ -1,0 +1,3 @@
+# Backend configuration for Terraform state storage
+# This file should be customized for your GCP project
+bucket = "YOUR-PROJECT-ID-tfstate"

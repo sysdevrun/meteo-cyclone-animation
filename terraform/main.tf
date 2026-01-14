@@ -8,8 +8,9 @@ terraform {
     }
   }
 
+  # Backend configuration should be provided via backend config file or CLI
+  # Run: terraform init -backend-config="bucket=YOUR-TFSTATE-BUCKET"
   backend "gcs" {
-    bucket = "meteo-cyclone-tfstate"
     prefix = "terraform/state"
   }
 }
@@ -38,6 +39,13 @@ resource "google_storage_bucket" "images_bucket" {
     response_header = ["*"]
     max_age_seconds = 3600
   }
+
+  lifecycle {
+    prevent_destroy = false
+    ignore_changes  = [
+      labels,
+    ]
+  }
 }
 
 # Make bucket publicly readable
@@ -61,7 +69,7 @@ resource "google_storage_bucket_iam_member" "fetch_service_account_admin" {
   member = "serviceAccount:${google_service_account.fetch_service_account.email}"
 }
 
-# Cloud Run service
+# Cloud Run job
 resource "google_cloud_run_v2_job" "fetch_job" {
   name     = "meteo-cyclone-fetch"
   location = var.region
@@ -86,8 +94,8 @@ resource "google_cloud_run_v2_job" "fetch_job" {
         }
       }
 
-      timeout         = "300s"
-      max_retries     = 2
+      timeout     = "300s"
+      max_retries = 2
     }
   }
 
@@ -96,6 +104,12 @@ resource "google_cloud_run_v2_job" "fetch_job" {
       template[0].template[0].containers[0].image,
     ]
   }
+
+  depends_on = [
+    google_project_service.cloud_run,
+    google_artifact_registry_repository.docker_repo,
+    google_storage_bucket_iam_member.fetch_service_account_admin
+  ]
 }
 
 # Artifact Registry repository
@@ -104,6 +118,8 @@ resource "google_artifact_registry_repository" "docker_repo" {
   repository_id = "meteo-cyclone"
   description   = "Docker repository for meteo cyclone fetcher"
   format        = "DOCKER"
+
+  depends_on = [google_project_service.artifact_registry]
 }
 
 # Cloud Scheduler job to trigger Cloud Run hourly
@@ -127,25 +143,34 @@ resource "google_cloud_scheduler_job" "fetch_scheduler" {
       service_account_email = google_service_account.fetch_service_account.email
     }
   }
+
+  depends_on = [
+    google_project_service.cloud_scheduler,
+    google_cloud_run_v2_job.fetch_job
+  ]
 }
 
 # Enable required APIs
 resource "google_project_service" "cloud_run" {
   service            = "run.googleapis.com"
   disable_on_destroy = false
+  disable_dependent_services = false
 }
 
 resource "google_project_service" "cloud_scheduler" {
   service            = "cloudscheduler.googleapis.com"
   disable_on_destroy = false
+  disable_dependent_services = false
 }
 
 resource "google_project_service" "artifact_registry" {
   service            = "artifactregistry.googleapis.com"
   disable_on_destroy = false
+  disable_dependent_services = false
 }
 
 resource "google_project_service" "cloud_build" {
   service            = "cloudbuild.googleapis.com"
   disable_on_destroy = false
+  disable_dependent_services = false
 }

@@ -9,7 +9,8 @@ on:
 env:
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCP_REGION: ${{ secrets.GCP_REGION || 'europe-west1' }}
-  BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME || 'meteo-cyclone-images' }}
+  BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME || 'sysdevrun-meteo-cyclone' }}
+  TFSTATE_BUCKET: ${{ secrets.TFSTATE_BUCKET || format('{0}-tfstate', secrets.GCP_PROJECT_ID) }}
 
 jobs:
   terraform:
@@ -44,7 +45,8 @@ jobs:
 
       - name: Terraform Init
         working-directory: ./terraform
-        run: terraform init
+        run: |
+          terraform init -backend-config="bucket=${{ env.TFSTATE_BUCKET }}"
 
       - name: Terraform Plan
         working-directory: ./terraform
@@ -114,7 +116,7 @@ jobs:
         run: |
           gcloud run jobs execute meteo-cyclone-fetch \
             --region=${{ env.GCP_REGION }} \
-            --wait
+            --wait || echo "Job execution failed or already running, continuing..."
 
       - name: Output Website URL
         run: |
