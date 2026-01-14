@@ -1,13 +1,14 @@
 # Meteo Cyclone Animation
 
-A bash-based weather image archiver that fetches cyclone trajectory images from Meteo France every hour and displays them as an animated timeline.
+A TypeScript-based weather image archiver that fetches cyclone trajectory images from Meteo France every hour and displays them as an animated timeline.
 
 ## Features
 
-- Fetches weather images hourly from Meteo France
+- Fetches weather images hourly from Meteo France using TypeScript
 - Organizes images in daily directories (YYYY-MM-DD)
 - Generates JSON index of all images with metadata
 - Beautiful web interface for viewing animations
+- No compilation step required - runs directly with tsx
 - Configurable animation settings:
   - Number of days to display (default: 3)
   - Animation speed (100ms - 2000ms)
@@ -17,8 +18,8 @@ A bash-based weather image archiver that fetches cyclone trajectory images from 
 
 ## Requirements
 
-- Bash
-- curl
+- Node.js (v18 or higher)
+- tsx (TypeScript Execute)
 - cron
 - A web server (or Python's http.server for local testing)
 
@@ -30,18 +31,29 @@ A bash-based weather image archiver that fetches cyclone trajectory images from 
    cd meteo-cyclone-animation
    ```
 
-2. Make scripts executable:
+2. Install dependencies:
    ```bash
-   chmod +x fetch_image.sh setup_cron.sh
+   npm install
    ```
 
-3. Set up automatic hourly fetching:
+   Or install tsx globally:
+   ```bash
+   npm install -g tsx
+   ```
+
+3. Make scripts executable:
+   ```bash
+   chmod +x fetch_image.ts setup_cron.sh
+   ```
+
+4. Set up automatic hourly fetching:
    ```bash
    ./setup_cron.sh
    ```
 
    This will:
-   - Add a cron job to run every hour
+   - Check that Node.js and tsx are installed
+   - Add a cron job to run every hour using tsx
    - Fetch the first image immediately
    - Create the images directory structure
 
@@ -49,7 +61,12 @@ A bash-based weather image archiver that fetches cyclone trajectory images from 
 
 ### Fetch an image manually
 ```bash
-./fetch_image.sh
+tsx fetch_image.ts
+```
+
+Or using npm script:
+```bash
+npm run fetch
 ```
 
 This will:
@@ -70,11 +87,14 @@ Then open your browser to: `http://localhost:8000`
 
 ```
 meteo-cyclone-animation/
-├── fetch_image.sh          # Main fetching script
+├── fetch_image.ts          # Main TypeScript fetching script
 ├── setup_cron.sh           # Cron setup script
 ├── index.html              # Web viewer
+├── package.json            # Node.js dependencies
+├── tsconfig.json           # TypeScript configuration
 ├── images.json             # Generated index (created by script)
 ├── fetch.log               # Cron execution log
+├── node_modules/           # Dependencies (after npm install)
 └── images/                 # Image storage (created by script)
     ├── 2026-01-14/
     │   ├── 10-00-00.png
@@ -95,12 +115,12 @@ crontab -e
 
 Current setting (every hour at minute 0):
 ```
-0 * * * * /path/to/fetch_image.sh >> /path/to/fetch.log 2>&1
+0 * * * * cd /path/to/meteo-cyclone-animation && tsx fetch_image.ts >> /path/to/fetch.log 2>&1
 ```
 
 For every 30 minutes:
 ```
-*/30 * * * * /path/to/fetch_image.sh >> /path/to/fetch.log 2>&1
+*/30 * * * * cd /path/to/meteo-cyclone-animation && tsx fetch_image.ts >> /path/to/fetch.log 2>&1
 ```
 
 ### Web viewer settings
@@ -144,7 +164,13 @@ ls -la images/
 cat images.json
 
 # Test manual fetch
-./fetch_image.sh
+tsx fetch_image.ts
+
+# Check if tsx is installed
+tsx --version
+
+# Check if Node.js is installed
+node --version
 ```
 
 ### Web interface shows "No images found"

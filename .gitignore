@@ -6,3 +6,12 @@ images.json
 
 # Logs
 *.log
+
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
