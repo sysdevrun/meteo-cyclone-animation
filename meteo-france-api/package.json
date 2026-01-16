@@ -1,0 +1,39 @@
+{
+  "name": "meteo-france-cyclone-api",
+  "version": "1.0.0",
+  "description": "TypeScript library for accessing the Meteo France cyclone tracking API",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "meteo-france",
+    "cyclone",
+    "weather",
+    "api",
+    "tropical-storm",
+    "hurricane"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
