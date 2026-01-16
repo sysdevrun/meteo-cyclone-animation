@@ -239,6 +239,9 @@
     </div>
 
     <script>
+        // API base URL for remote images and data
+        const API_BASE_URL = 'https://cmrs.sys-dev-run.fr';
+
         let images = [];
         let currentIndex = 0;
         let isPlaying = false;
@@ -264,7 +267,7 @@
         async function loadImages() {
             try {
                 const days = parseInt(daysInput.value) || 3;
-                const response = await fetch('images.json');
+                const response = await fetch(`${API_BASE_URL}/images.json`);
 
                 if (!response.ok) {
                     throw new Error('Failed to load images.json');
@@ -318,7 +321,7 @@
                 imageContainer.appendChild(img);
             }
 
-            img.src = image.path;
+            img.src = `${API_BASE_URL}/${image.path}`;
             dateDisplay.textContent = image.date;
             frameCounter.textContent = index + 1;
 
