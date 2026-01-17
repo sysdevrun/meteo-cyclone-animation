@@ -81,23 +81,27 @@ export class WMSDownloader {
    */
   async getCapabilities(): Promise<WMSCapabilities> {
     try {
-      const info = await this.endpoint.isReady();
+      await this.endpoint.isReady();
+
+      const serviceInfo = this.endpoint.getServiceInfo();
+      const layers = this.endpoint.getFlattenedLayers();
+      const version = this.endpoint.getVersion();
 
       return {
         service: {
-          title: info.title || undefined,
-          abstract: info.abstract || undefined,
-          keywords: info.keywords || []
+          title: serviceInfo.title || undefined,
+          abstract: serviceInfo.abstract || undefined,
+          keywords: serviceInfo.keywords || []
         },
-        layers: info.layers.map(layer => ({
+        layers: layers.map(layer => ({
           name: layer.name,
           title: layer.title || undefined,
           abstract: layer.abstract || undefined,
           boundingBox: layer.boundingBox || undefined,
           crs: layer.availableCrs || []
         })),
-        formats: info.outputFormats || [],
-        version: info.version || '1.3.0'
+        formats: serviceInfo.outputFormats || [],
+        version: version || '1.3.0'
       };
     } catch (error) {
       throw new Error(`Failed to get WMS capabilities: ${error instanceof Error ? error.message : String(error)}`);
