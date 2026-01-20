@@ -22,12 +22,18 @@ const DATA_DIR = path.join(__dirname, 'data');
 const BASIN = 'SWI';
 
 // WMS Configuration for Indian Ocean satellite imagery
-const WMS_URL = 'https://view.eumetsat.int/geoserver/msg_iodc/ir108/ows';
-const WMS_LAYER = 'ir108';
-// Indian Ocean bounding box focused on cyclone region
+// Common settings
 const WMS_BBOX: [number, number, number, number] = [30, -40, 100, 10];
 const WMS_WIDTH = 1400;
 const WMS_HEIGHT = 1000;
+
+// IR108 infrared channel
+const WMS_IR108_URL = 'https://view.eumetsat.int/geoserver/msg_iodc/ir108/ows';
+const WMS_IR108_LAYER = 'ir108';
+
+// RGB Natural Enhanced (visible color composite)
+const WMS_RGB_URL = 'https://view.eumetsat.int/geoserver/msg_iodc/rgb_naturalenhncd/ows';
+const WMS_RGB_LAYER = 'rgb_naturalenhncd';
 
 // Get current cyclone season (July to June cycle)
 function getCurrentSeason(): string {
@@ -97,16 +103,20 @@ function getRelativePath(absolutePath: string): string {
 }
 
 // Download satellite image from WMS
-async function downloadSatelliteImage(outputDir: string): Promise<SatelliteImage | null> {
+async function downloadSatelliteImage(
+  wmsUrl: string,
+  layer: string,
+  outputDir: string
+): Promise<SatelliteImage | null> {
   try {
-    const downloader = new WMSDownloader(WMS_URL);
+    const downloader = new WMSDownloader(wmsUrl);
 
     // Generate filename with layer type for future extensibility
-    const filename = `satellite_${WMS_LAYER}.png`;
+    const filename = `satellite_${layer}.png`;
     const outputPath = path.join(outputDir, filename);
 
     await downloader.downloadToFile({
-      layers: WMS_LAYER,
+      layers: layer,
       bbox: WMS_BBOX,
       width: WMS_WIDTH,
       height: WMS_HEIGHT,
@@ -115,13 +125,13 @@ async function downloadSatelliteImage(outputDir: string): Promise<SatelliteImage
 
     return {
       file: getRelativePath(outputPath),
-      layer: WMS_LAYER,
+      layer: layer,
       bbox: WMS_BBOX,
       width: WMS_WIDTH,
       height: WMS_HEIGHT,
     };
   } catch (error) {
-    console.warn(`   Warning: Could not download satellite image: ${error instanceof Error ? error.message : String(error)}`);
+    console.warn(`   Warning: Could not download ${layer} image: ${error instanceof Error ? error.message : String(error)}`);
     return null;
   }
 }
@@ -204,15 +214,26 @@ async function main(): Promise<void> {
       console.warn(`   Warning: Could not fetch report: ${error instanceof Error ? error.message : String(error)}`);
     }
 
-    // Download satellite image
-    const satelliteStepNum = trajectoryIndex + 1;
-    console.log(`\n${satelliteStepNum}. Downloading Indian Ocean satellite image (${WMS_LAYER})...`);
-    const satelliteImage = await downloadSatelliteImage(dateDir);
-    if (satelliteImage) {
-      console.log(`   Layer: ${satelliteImage.layer}`);
-      console.log(`   Bounding box: [${satelliteImage.bbox.join(', ')}]`);
-      console.log(`   Size: ${satelliteImage.width}x${satelliteImage.height}`);
-      console.log(`   Saved to ${satelliteImage.file}`);
+    // Download IR108 satellite image
+    const ir108StepNum = trajectoryIndex + 1;
+    console.log(`\n${ir108StepNum}. Downloading Indian Ocean IR108 satellite image...`);
+    const satelliteIr108 = await downloadSatelliteImage(WMS_IR108_URL, WMS_IR108_LAYER, dateDir);
+    if (satelliteIr108) {
+      console.log(`   Layer: ${satelliteIr108.layer}`);
+      console.log(`   Bounding box: [${satelliteIr108.bbox.join(', ')}]`);
+      console.log(`   Size: ${satelliteIr108.width}x${satelliteIr108.height}`);
+      console.log(`   Saved to ${satelliteIr108.file}`);
+    }
+
+    // Download RGB Natural Enhanced satellite image
+    const rgbStepNum = ir108StepNum + 1;
+    console.log(`\n${rgbStepNum}. Downloading Indian Ocean RGB Natural Enhanced satellite image...`);
+    const satelliteRgb = await downloadSatelliteImage(WMS_RGB_URL, WMS_RGB_LAYER, dateDir);
+    if (satelliteRgb) {
+      console.log(`   Layer: ${satelliteRgb.layer}`);
+      console.log(`   Bounding box: [${satelliteRgb.bbox.join(', ')}]`);
+      console.log(`   Size: ${satelliteRgb.width}x${satelliteRgb.height}`);
+      console.log(`   Saved to ${satelliteRgb.file}`);
     }
 
     // Create snapshot metadata
@@ -223,7 +244,8 @@ async function main(): Promise<void> {
       cyclone_list_file: getRelativePath(cycloneListFile),
       trajectory_files: trajectoryFiles,
       report_file: reportFile,
-      satellite_image: satelliteImage,
+      satellite_ir108: satelliteIr108,
+      satellite_rgb_naturalenhncd: satelliteRgb,
     };
 
     // Load existing data and append new snapshot
