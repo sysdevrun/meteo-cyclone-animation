@@ -1,0 +1,75 @@
+import type { SnapshotMetadata, CycloneTrajectoryFile, CycloneReport, LoadedSnapshot } from '../types';
+
+export const API_BASE_URL = 'https://cmrs.sys-dev-run.fr';
+
+// Cache for loaded snapshot data
+const snapshotCache: Map<number, LoadedSnapshot> = new Map();
+
+// Load metadata from api_data.json
+export async function loadMetadata(): Promise<SnapshotMetadata[]> {
+  const response = await fetch(`${API_BASE_URL}/meteo-france-api/api_data.json`);
+  if (!response.ok) {
+    throw new Error('Failed to load api_data.json');
+  }
+
+  const data: SnapshotMetadata[] = await response.json();
+
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error('No snapshot data found');
+  }
+
+  // Sort by timestamp
+  return data.sort((a, b) => a.timestamp - b.timestamp);
+}
+
+// Fetch snapshot data from files
+export async function fetchSnapshotData(metadata: SnapshotMetadata): Promise<LoadedSnapshot> {
+  // Return cached data if available
+  const cached = snapshotCache.get(metadata.timestamp);
+  if (cached) {
+    return cached;
+  }
+
+  // Fetch trajectories
+  const trajectories: CycloneTrajectoryFile[] = [];
+  for (const trajectoryFile of metadata.trajectory_files) {
+    const response = await fetch(`${API_BASE_URL}/meteo-france-api/${trajectoryFile}`);
+    if (response.ok) {
+      const trajectory = await response.json();
+      trajectories.push(trajectory);
+    }
+  }
+
+  // Fetch report if available
+  let report: CycloneReport | null = null;
+  if (metadata.report_file) {
+    const response = await fetch(`${API_BASE_URL}/meteo-france-api/${metadata.report_file}`);
+    if (response.ok) {
+      report = await response.json();
+    }
+  }
+
+  // Create snapshot object
+  const snapshot: LoadedSnapshot = {
+    timestamp: metadata.timestamp,
+    date: metadata.date,
+    trajectories,
+    report,
+  };
+
+  // Cache the loaded data
+  snapshotCache.set(metadata.timestamp, snapshot);
+
+  return snapshot;
+}
+
+// Get satellite image URL
+export function getSatelliteImageUrl(filePath: string): string {
+  return `${API_BASE_URL}/meteo-france-api/${filePath}`;
+}
+
+// Convert bbox [minLon, minLat, maxLon, maxLat] to Leaflet bounds
+export function bboxToLeafletBounds(bbox: [number, number, number, number]): [[number, number], [number, number]] {
+  const [minLon, minLat, maxLon, maxLat] = bbox;
+  return [[minLat, minLon], [maxLat, maxLon]];
+}
