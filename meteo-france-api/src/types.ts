@@ -183,7 +183,8 @@ export interface FetchSnapshot {
   cyclone_list_file: string;
   trajectory_files: string[];
   report_file: string | null;
-  satellite_image: SatelliteImage | null;
+  satellite_ir108: SatelliteImage | null;
+  satellite_rgb_naturalenhncd: SatelliteImage | null;
 }
 
 export type ApiData = FetchSnapshot[];
