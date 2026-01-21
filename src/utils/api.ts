@@ -1,6 +1,10 @@
+import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
+import { fr } from 'date-fns/locale';
 import type { SnapshotMetadata, CycloneTrajectoryFile, CycloneReport, LoadedSnapshot } from '../types';
 
 export const API_BASE_URL = 'https://cmrs.sys-dev-run.fr';
+const REUNION_TIMEZONE = 'Indian/Reunion';
 
 // Cache for loaded snapshot data
 const snapshotCache: Map<number, LoadedSnapshot> = new Map();
@@ -72,4 +76,11 @@ export function getSatelliteImageUrl(filePath: string): string {
 export function bboxToLeafletBounds(bbox: [number, number, number, number]): [[number, number], [number, number]] {
   const [minLon, minLat, maxLon, maxLat] = bbox;
   return [[minLat, minLon], [maxLat, maxLon]];
+}
+
+// Format timestamp to Réunion timezone
+export function formatDateReunion(timestamp: number): string {
+  const date = new Date(timestamp * 1000);
+  const zonedDate = toZonedTime(date, REUNION_TIMEZONE);
+  return format(zonedDate, "EEEE d MMMM yyyy 'à' HH'h'mm", { locale: fr });
 }
