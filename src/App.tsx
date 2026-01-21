@@ -52,33 +52,37 @@ function App() {
 
         {/* Data source */}
         <div className="text-center mb-4 text-gray-600">
-          Données{' '}
-          <a
-            href="https://meteofrance.re/fr/cyclone"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary-500 hover:underline font-medium"
-          >
-            Météo-France
-          </a>
-          {' '}&{' '}
-          <a
-            href="https://www.eumetsat.int/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary-500 hover:underline font-medium"
-          >
-            EUMETSAT
-          </a>
-          {' '}- conçu par{' '}
-          <a
-            href="https://www.sys-dev-run.fr/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary-500 hover:underline font-medium"
-          >
-            SysDevRun
-          </a>
+          <div>
+            Données{' '}
+            <a
+              href="https://meteofrance.re/fr/cyclone"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-500 hover:underline font-medium"
+            >
+              Météo-France
+            </a>
+            {' '}&{' '}
+            <a
+              href="https://www.eumetsat.int/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-500 hover:underline font-medium"
+            >
+              EUMETSAT
+            </a>
+          </div>
+          <div>
+            Conçu par{' '}
+            <a
+              href="https://www.sys-dev-run.fr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-500 hover:underline font-medium"
+            >
+              SysDevRun
+            </a>
+          </div>
         </div>
 
         {/* Map Container */}
