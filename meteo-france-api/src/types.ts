@@ -189,6 +189,64 @@ export interface FetchSnapshot {
 
 export type ApiData = FetchSnapshot[];
 
+// ============ Satellite Metadata Types (for fetch_satellite.ts) ============
+
+export interface SatelliteLayerConfig {
+  /** Layer identifier */
+  id: string;
+  /** Display name */
+  name: string;
+  /** WMS endpoint URL */
+  url: string;
+  /** WMS layer name */
+  layer: string;
+}
+
+export interface SatelliteFetchConfig {
+  /** Bounding box [minLon, minLat, maxLon, maxLat] */
+  bbox: [number, number, number, number];
+  /** Image height in pixels (width computed from aspect ratio) */
+  height: number;
+  /** Output directory relative to script location */
+  output_dir: string;
+  /** WMS layers to fetch */
+  layers: SatelliteLayerConfig[];
+}
+
+export interface SatelliteImageEntry {
+  /** Unique identifier for this image */
+  id: string;
+  /** Relative path to the image file */
+  file: string;
+  /** WMS layer ID */
+  layer: string;
+  /** WMS layer display name */
+  layer_name: string;
+  /** Unix timestamp when image was fetched */
+  timestamp: number;
+  /** Human-readable date string */
+  date: string;
+  /** Config used to fetch this image */
+  config: {
+    bbox: [number, number, number, number];
+    width: number;
+    height: number;
+  };
+}
+
+export interface SatelliteMetadata {
+  /** Last update timestamp */
+  last_updated: number;
+  /** Last update date string */
+  last_updated_date: string;
+  /** Total number of images */
+  total_images: number;
+  /** Fetch configuration - script reads this on startup */
+  config: SatelliteFetchConfig;
+  /** All satellite images */
+  images: SatelliteImageEntry[];
+}
+
 // ============ Type Guards ============
 
 export function isAnalysisFeature(feature: TrajectoryFeature): feature is AnalysisFeature {
