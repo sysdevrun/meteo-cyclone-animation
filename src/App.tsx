@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useCycloneData } from './hooks/useCycloneData';
 import { useAnimation } from './hooks/useAnimation';
+import { formatDateReunion } from './utils/api';
 import { CycloneMap } from './components/CycloneMap';
 import { PlaybackButtons } from './components/PlaybackButtons';
 import { ConfigurationPanel } from './components/ConfigurationPanel';
@@ -112,7 +113,8 @@ function App() {
             </div>
           )}
           <div className="text-lg text-gray-600">
-            {currentSnapshot?.date || 'Chargement...'}
+            {currentSnapshot ? formatDateReunion(currentSnapshot.timestamp) : 'Chargement...'}
+            {currentSnapshot && <span className="text-sm text-gray-400 ml-1">(Réunion)</span>}
           </div>
         </div>
 
