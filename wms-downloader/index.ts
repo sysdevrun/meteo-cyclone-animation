@@ -120,7 +120,7 @@ export class WMSDownloader {
       width,
       height,
       format = 'image/png',
-      version = '1.3.0',
+      version = '1.1.1', // Use 1.1.1 for standard lon/lat bbox order (1.3.0 uses lat/lon)
       crs = 'EPSG:4326',
       ...extraParams
     } = options;
@@ -143,6 +143,7 @@ export class WMSDownloader {
       });
 
       const url = `${this.baseUrl}?${params.toString()}`;
+      console.log(`   WMS URL: ${url}`);
 
       // Fetch the image
       const response = await fetch(url);
