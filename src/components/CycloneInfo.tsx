@@ -15,18 +15,18 @@ export function CycloneInfo({ name, development, pressure, maxWind, referenceTim
         <span className="mr-1">🌀</span> {name}
       </h3>
       <p className="text-gray-600 my-1">
-        <strong className="text-gray-800">Status:</strong> {development || 'N/A'}
+        <strong className="text-gray-800">Statut :</strong> {development || 'N/D'}
       </p>
       {pressure !== undefined && (
         <p className="text-gray-600 my-1">
-          <strong className="text-gray-800">Pressure:</strong> {pressure} hPa
+          <strong className="text-gray-800">Pression :</strong> {pressure} hPa
         </p>
       )}
       <p className="text-gray-600 my-1">
-        <strong className="text-gray-800">Max wind:</strong> {formatWind(maxWind)}
+        <strong className="text-gray-800">Vent max :</strong> {formatWind(maxWind)}
       </p>
       <p className="text-gray-600 my-1">
-        <strong className="text-gray-800">Update:</strong> {formatReferenceTime(referenceTime)}
+        <strong className="text-gray-800">Mise à jour :</strong> {formatReferenceTime(referenceTime)}
       </p>
     </div>
   );

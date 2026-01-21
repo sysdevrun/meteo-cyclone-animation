@@ -26,5 +26,5 @@ export function formatPopupDate(isoDate: string): string {
 
 // Format reference time for info display
 export function formatReferenceTime(isoDate: string): string {
-  return new Date(isoDate).toLocaleString();
+  return new Date(isoDate).toLocaleString('fr-FR');
 }

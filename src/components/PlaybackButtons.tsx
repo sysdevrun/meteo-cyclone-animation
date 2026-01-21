@@ -22,14 +22,14 @@ export function PlaybackButtons({
         disabled={disabled}
         className="px-6 py-3 text-base font-semibold rounded-lg text-white bg-green-600 hover:bg-green-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-600/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
       >
-        {isPlaying ? '⏸ Pause' : '▶ Play'}
+        {isPlaying ? '⏸ Pause' : '▶ Lecture'}
       </button>
       <button
         onClick={onRestart}
         disabled={disabled}
         className="px-6 py-3 text-base font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-600/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
       >
-        ↻ Restart
+        ↻ Redémarrer
       </button>
       <button
         onClick={onToggleLoop}
@@ -39,7 +39,7 @@ export function PlaybackButtons({
             : 'bg-gray-500 hover:bg-gray-600 hover:shadow-gray-500/30'
         }`}
       >
-        ∞ Loop: {isLooping ? 'ON' : 'OFF'}
+        ∞ Boucle : {isLooping ? 'ON' : 'OFF'}
       </button>
     </div>
   );

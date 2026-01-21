@@ -17,7 +17,7 @@ export function useCycloneData(): UseCycloneDataResult {
   const [currentSnapshot, setCurrentSnapshot] = useState<LoadedSnapshot | null>(null);
   const [currentMetadata, setCurrentMetadata] = useState<SnapshotMetadata | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState('Loading metadata...');
+  const [loadingMessage, setLoadingMessage] = useState('Chargement des métadonnées...');
   const [error, setError] = useState<string | null>(null);
 
   // Load initial metadata
@@ -26,7 +26,7 @@ export function useCycloneData(): UseCycloneDataResult {
 
     async function init() {
       try {
-        setLoadingMessage('Loading metadata...');
+        setLoadingMessage('Chargement des métadonnées...');
         const data = await loadMetadata();
 
         if (!mounted) return;
@@ -35,7 +35,7 @@ export function useCycloneData(): UseCycloneDataResult {
 
         // Load first snapshot
         if (data.length > 0) {
-          setLoadingMessage('Loading first snapshot...');
+          setLoadingMessage('Chargement de la première capture...');
           const snapshot = await fetchSnapshotData(data[0]);
           if (!mounted) return;
           setCurrentSnapshot(snapshot);
@@ -45,7 +45,7 @@ export function useCycloneData(): UseCycloneDataResult {
         setIsLoading(false);
       } catch (err) {
         if (!mounted) return;
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        setError(err instanceof Error ? err.message : 'Erreur inconnue');
         setIsLoading(false);
       }
     }

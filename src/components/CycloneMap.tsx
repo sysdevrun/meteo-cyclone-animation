@@ -111,31 +111,31 @@ function TrajectoryPopup({ feature, isAnalysis }: { feature: TrajectoryFeature; 
   const data = feature.properties.cyclone_data;
   if (!data) return null;
 
-  const type = isAnalysis ? 'Analysis' : 'Forecast';
+  const type = isAnalysis ? 'Analyse' : 'Prévision';
 
   return (
     <div className="min-w-[180px]">
       <h3 className="font-bold text-gray-800 mb-2">{type}</h3>
       <p className="text-gray-600 text-sm my-1">
-        <strong>Time:</strong> {formatPopupDate(feature.properties.time)}
+        <strong>Heure :</strong> {formatPopupDate(feature.properties.time)}
       </p>
       <p className="text-gray-600 text-sm my-1">
-        <strong>Development:</strong> {data.development || 'N/A'}
+        <strong>Développement :</strong> {data.development || 'N/D'}
       </p>
       {data.minimum_pressure !== undefined && (
         <p className="text-gray-600 text-sm my-1">
-          <strong>Pressure:</strong> {data.minimum_pressure} hPa
+          <strong>Pression :</strong> {data.minimum_pressure} hPa
         </p>
       )}
       <p className="text-gray-600 text-sm my-1">
-        <strong>Max wind:</strong> {formatWind(data.maximum_wind.wind_speed_kt)}
+        <strong>Vent max :</strong> {formatWind(data.maximum_wind.wind_speed_kt)}
       </p>
       <p className="text-gray-600 text-sm my-1">
-        <strong>Gusts:</strong> {formatWind(data.maximum_wind.wind_speed_gust_kt)}
+        <strong>Rafales :</strong> {formatWind(data.maximum_wind.wind_speed_gust_kt)}
       </p>
       {data.Dvorak && (
         <p className="text-gray-600 text-sm my-1">
-          <strong>Dvorak T:</strong> {data.Dvorak.final_T_number}
+          <strong>Dvorak T :</strong> {data.Dvorak.final_T_number}
         </p>
       )}
     </div>

@@ -13,7 +13,7 @@ export function ReportSection({ report }: ReportSectionProps) {
     <div className="mt-6 bg-gray-50 rounded-xl p-5">
       <h2 className="text-gray-800 text-xl font-semibold mb-4 pb-3 border-b-2 border-primary-500">
         <span className="mr-2">📋</span>
-        Cyclone Activity Report
+        Bulletin d'activité cyclonique
       </h2>
       <div className="text-gray-700 leading-relaxed">
         {report.text_bloc_item.map((item, index) => {

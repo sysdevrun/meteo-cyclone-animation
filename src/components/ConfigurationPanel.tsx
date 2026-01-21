@@ -32,7 +32,7 @@ export function ConfigurationPanel({
       {/* Speed Control */}
       <div className="flex items-center gap-3 flex-wrap mb-4">
         <label htmlFor="speedSlider" className="font-semibold text-gray-700 min-w-[120px]">
-          Animation speed:
+          Vitesse d'animation :
         </label>
         <input
           type="range"
@@ -52,7 +52,7 @@ export function ConfigurationPanel({
       {/* Snapshot Slider */}
       <div className="flex items-center gap-3 flex-wrap mb-4">
         <label htmlFor="snapshotSlider" className="font-semibold text-gray-700 min-w-[120px]">
-          Snapshot:
+          Capture :
         </label>
         <input
           type="range"
@@ -73,7 +73,7 @@ export function ConfigurationPanel({
       {/* Satellite Layers */}
       <div className="flex items-center gap-3 flex-wrap">
         <label className="font-semibold text-gray-700 min-w-[120px]">
-          Satellite layers:
+          Couches satellite :
         </label>
         <div className="flex gap-5 flex-wrap">
           <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -83,9 +83,9 @@ export function ConfigurationPanel({
               onChange={(e) => onIr108Toggle(e.target.checked)}
               className="w-4 h-4 accent-primary-500 cursor-pointer"
             />
-            <span className="text-gray-700">IR108 (Infrared)</span>
+            <span className="text-gray-700">IR108 (Infrarouge)</span>
             <span className={`text-sm ${ir108Available ? 'text-green-600' : 'text-red-500'}`}>
-              ({ir108Available ? 'available' : 'unavailable'})
+              ({ir108Available ? 'disponible' : 'indisponible'})
             </span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -95,9 +95,9 @@ export function ConfigurationPanel({
               onChange={(e) => onRgbToggle(e.target.checked)}
               className="w-4 h-4 accent-primary-500 cursor-pointer"
             />
-            <span className="text-gray-700">RGB Natural Enhanced</span>
+            <span className="text-gray-700">RGB Couleurs naturelles</span>
             <span className={`text-sm ${rgbAvailable ? 'text-green-600' : 'text-red-500'}`}>
-              ({rgbAvailable ? 'available' : 'unavailable'})
+              ({rgbAvailable ? 'disponible' : 'indisponible'})
             </span>
           </label>
         </div>

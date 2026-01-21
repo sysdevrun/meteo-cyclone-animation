@@ -46,7 +46,7 @@ function App() {
         {/* Header */}
         <h1 className="text-center text-gray-800 text-3xl font-bold mb-4">
           <span className="mr-2">🌀</span>
-          Cyclone Trajectory Map
+          Cyclones.re
         </h1>
 
         {/* Data source */}
@@ -85,7 +85,7 @@ function App() {
             />
           ) : (
             <div className="h-[500px] rounded-xl bg-gray-100 flex items-center justify-center">
-              <div className="text-gray-500">No active cyclones</div>
+              <div className="text-gray-500">Aucun cyclone actif</div>
             </div>
           )}
 
@@ -103,7 +103,7 @@ function App() {
             </div>
           )}
           <div className="text-lg text-gray-600">
-            {currentSnapshot?.date || 'Loading...'}
+            {currentSnapshot?.date || 'Chargement...'}
           </div>
         </div>
 
