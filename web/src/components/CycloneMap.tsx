@@ -1,11 +1,17 @@
 import { useEffect, useRef, useMemo, useCallback } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Polyline, Polygon, Popup, ImageOverlay, useMap } from 'react-leaflet';
+import { MapContainer, CircleMarker, Polyline, Polygon, Popup, ImageOverlay, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import type { CycloneTrajectory, TrajectoryFeature, SatelliteImageData } from '../types';
 import { getColor } from '../utils/colors';
 import { formatPopupDate, formatWind, formatForecastDate } from '../utils/formatting';
 import { getSatelliteImageUrl, bboxToLeafletBounds } from '../utils/api';
 import { Legend } from './Legend';
+import { PMTilesLayer } from './PMTilesLayer';
+
+// Constants for PMTiles layers (defined outside component to prevent re-renders)
+const PMTILES_URL = '/world-boundaries-water-z5.pmtiles';
+const WATER_LAYERS: ('water')[] = ['water'];
+const BOUNDARY_LAYERS: ('earth' | 'boundaries')[] = ['earth', 'boundaries'];
 
 interface CycloneMapProps {
   trajectories: CycloneTrajectory[];
@@ -15,6 +21,20 @@ interface CycloneMapProps {
   rgbEnabled: boolean;
   initialFit: boolean;
   onInitialFitDone: () => void;
+}
+
+// Component to create custom panes
+function MapPaneSetup() {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map.getPane('cyclonePane')) {
+      const pane = map.createPane('cyclonePane');
+      pane.style.zIndex = '500';
+    }
+  }, [map]);
+
+  return null;
 }
 
 // Component to fit map bounds
@@ -69,7 +89,7 @@ function ForecastLabel({ lat, lon, time }: { lat: number; lon: number; time: str
       iconAnchor: [-8, 6],
     });
 
-    markerRef.current = L.marker([lat, lon], { icon: labelIcon, interactive: false }).addTo(map);
+    markerRef.current = L.marker([lat, lon], { icon: labelIcon, interactive: false, pane: 'cyclonePane' }).addTo(map);
 
     return () => {
       if (markerRef.current) {
@@ -94,7 +114,7 @@ function CycloneNameLabel({ lat, lon, name }: { lat: number; lon: number; name: 
       iconAnchor: [-10, 4],
     });
 
-    markerRef.current = L.marker([lat, lon], { icon: labelIcon, interactive: false }).addTo(map);
+    markerRef.current = L.marker([lat, lon], { icon: labelIcon, interactive: false, pane: 'cyclonePane' }).addTo(map);
 
     return () => {
       if (markerRef.current) {
@@ -189,15 +209,12 @@ export function CycloneMap({
   return (
     <div className="relative h-[500px] rounded-xl overflow-hidden shadow-inner">
       <MapContainer
-        center={[-17, 77]}
-        zoom={5}
+        center={[-21.17, 55.55]}
+        zoom={4}
         className="h-full w-full"
         zoomControl={true}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <MapPaneSetup />
 
         <MapBoundsController
           trajectories={trajectories}
@@ -205,12 +222,20 @@ export function CycloneMap({
           onFitDone={handleFitDone}
         />
 
-        {/* Satellite overlays (rendered first so they're behind everything) */}
+        {/* Water layer (below satellites) */}
+        <PMTilesLayer
+          url={PMTILES_URL}
+          layers={WATER_LAYERS}
+          pane="waterPane"
+          zIndex={350}
+        />
+
+        {/* Satellite overlays */}
         {ir108Enabled && ir108Data && (
           <ImageOverlay
             url={getSatelliteImageUrl(ir108Data.file)}
             bounds={bboxToLeafletBounds(ir108Data.bbox)}
-            opacity={0.7}
+            opacity={0.8}
             zIndex={1}
           />
         )}
@@ -218,10 +243,18 @@ export function CycloneMap({
           <ImageOverlay
             url={getSatelliteImageUrl(rgbData.file)}
             bounds={bboxToLeafletBounds(rgbData.bbox)}
-            opacity={0.7}
+            opacity={0.8}
             zIndex={2}
           />
         )}
+
+        {/* Earth coastlines and boundaries (above satellites) */}
+        <PMTilesLayer
+          url={PMTILES_URL}
+          layers={BOUNDARY_LAYERS}
+          pane="boundariesPane"
+          zIndex={450}
+        />
 
         {/* Render each trajectory */}
         {processedData.map(({ trajectory, analysisPoints, forecastPoints, uncertaintyCone }, trajIndex) => (
@@ -236,6 +269,7 @@ export function CycloneMap({
                   fillColor: 'orange',
                   fillOpacity: 0.2,
                 }}
+                pane="cyclonePane"
               />
             )}
 
@@ -251,6 +285,7 @@ export function CycloneMap({
                   weight: 3,
                   opacity: 0.8,
                 }}
+                pane="cyclonePane"
               />
             )}
 
@@ -278,6 +313,7 @@ export function CycloneMap({
                       opacity: 0.8,
                       dashArray: '5, 5',
                     }}
+                    pane="cyclonePane"
                   />
                 )}
                 <Polyline
@@ -291,6 +327,7 @@ export function CycloneMap({
                     opacity: 0.8,
                     dashArray: '5, 5',
                   }}
+                  pane="cyclonePane"
                 />
               </>
             )}
@@ -314,6 +351,7 @@ export function CycloneMap({
                       opacity: 1,
                       fillOpacity: 0.8,
                     }}
+                    pane="cyclonePane"
                   >
                     <Popup>
                       <TrajectoryPopup feature={feature} isAnalysis={true} />
@@ -345,6 +383,7 @@ export function CycloneMap({
                       opacity: 1,
                       fillOpacity: 0.6,
                     }}
+                    pane="cyclonePane"
                   >
                     <Popup>
                       <TrajectoryPopup feature={feature} isAnalysis={false} />
