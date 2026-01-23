@@ -102,10 +102,10 @@ function getDateComponents(date: Date): { dateStr: string; timeStr: string } {
 }
 
 /**
- * Get relative path from project root
+ * Get relative path from public/ (web root)
  */
 function getRelativePath(absolutePath: string): string {
-  return path.relative(path.join(__dirname, '..'), absolutePath);
+  return path.relative(path.join(__dirname, '..', 'public'), absolutePath);
 }
 
 /**

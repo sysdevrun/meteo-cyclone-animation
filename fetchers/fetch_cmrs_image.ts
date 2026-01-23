@@ -92,7 +92,7 @@ function getImageFiles(dir: string): ImageMetadata[] {
         const timeStr = parts[1].replace('.png', '').replace(/-/g, ':'); // HH:MM:SS
 
         images.push({
-          path: `public/data/cmrs_images/${relativePath.replace(/\\/g, '/')}`,
+          path: `data/cmrs_images/${relativePath.replace(/\\/g, '/')}`,
           date: `${dateStr} ${timeStr}`,
           timestamp: Math.floor(stats.mtimeMs / 1000)
         });

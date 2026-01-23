@@ -110,9 +110,9 @@ function saveApiData(data: ApiData): void {
   fs.writeFileSync(JSON_FILE, JSON.stringify(data, null, 2));
 }
 
-// Get relative path from project root
+// Get relative path from public/ (web root)
 function getRelativePath(absolutePath: string): string {
-  return path.relative(path.join(__dirname, '..'), absolutePath);
+  return path.relative(path.join(__dirname, '..', 'public'), absolutePath);
 }
 
 // Download satellite image from WMS
