@@ -1,8 +1,5 @@
-# Fetched images
-images/
-
-# Generated JSON
-images.json
+# Fetched data
+data/
 
 # Logs
 *.log

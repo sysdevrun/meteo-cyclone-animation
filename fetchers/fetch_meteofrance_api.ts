@@ -17,8 +17,9 @@ import { WMSDownloader } from '../wms-downloader/index';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Configuration
-const JSON_FILE = path.join(__dirname, 'api_data.json');
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const JSON_FILE = path.join(DATA_DIR, 'api_data.json');
+const METEOFRANCE_DIR = path.join(DATA_DIR, 'meteofrance');
 const BASIN = 'SWI';
 
 // WMS Configuration for Indian Ocean satellite imagery
@@ -73,7 +74,7 @@ function getDateDir(date: Date): string {
   const minutes = String(date.getMinutes()).padStart(2, '0');
   const seconds = String(date.getSeconds()).padStart(2, '0');
 
-  return path.join(DATA_DIR, `${year}-${month}-${day}`, `${hours}-${minutes}-${seconds}`);
+  return path.join(METEOFRANCE_DIR, `${year}-${month}-${day}`, `${hours}-${minutes}-${seconds}`);
 }
 
 // Sanitize cyclone ID for filename
@@ -100,9 +101,9 @@ function saveApiData(data: ApiData): void {
   fs.writeFileSync(JSON_FILE, JSON.stringify(data, null, 2));
 }
 
-// Get relative path from __dirname
+// Get relative path from project root
 function getRelativePath(absolutePath: string): string {
-  return path.relative(__dirname, absolutePath);
+  return path.relative(path.join(__dirname, '..'), absolutePath);
 }
 
 // Download satellite image from WMS

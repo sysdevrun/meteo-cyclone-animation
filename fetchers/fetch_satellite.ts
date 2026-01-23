@@ -24,14 +24,15 @@ import type { SatelliteImageEntry, SatelliteMetadata, SatelliteFetchConfig } fro
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Metadata file path
-const METADATA_FILE = path.join(__dirname, 'satellite_metadata.json');
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const METADATA_FILE = path.join(DATA_DIR, 'satellite_metadata.json');
 
 // ============ Default Configuration ============
 
 const DEFAULT_CONFIG: SatelliteFetchConfig = {
   bbox: [21.1, -41, 103, 21.1],
   height: 1000,
-  output_dir: 'satellite_images',
+  output_dir: 'satellite',
   layers: [
     {
       id: 'ir108',
@@ -90,10 +91,10 @@ function getDateComponents(date: Date): { dateStr: string; timeStr: string } {
 }
 
 /**
- * Get relative path from __dirname
+ * Get relative path from project root
  */
 function getRelativePath(absolutePath: string): string {
-  return path.relative(__dirname, absolutePath);
+  return path.relative(path.join(__dirname, '..'), absolutePath);
 }
 
 /**
@@ -165,6 +166,9 @@ async function main(): Promise<void> {
     const dateStr = formatDate(now);
     const { dateStr: datePart, timeStr: timePart } = getDateComponents(now);
 
+    // Ensure data directory exists
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+
     // Load metadata (contains config)
     const metadata = loadMetadata();
     const config = metadata.config;
@@ -173,7 +177,7 @@ async function main(): Promise<void> {
     const width = computeWidth(config.bbox, config.height);
 
     // Resolve output directory
-    const outputBaseDir = path.join(__dirname, config.output_dir);
+    const outputBaseDir = path.join(DATA_DIR, config.output_dir);
 
     console.log('='.repeat(60));
     console.log('Satellite Image Fetcher');
