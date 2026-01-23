@@ -91,7 +91,7 @@ This project now includes a TypeScript library for downloading data from WMS (We
 ### Quick Start
 
 ```typescript
-import { WMSDownloader } from './wms-downloader';
+import { WMSDownloader } from './fetchers/wms-downloader';
 
 const downloader = new WMSDownloader(
   'https://view.eumetsat.int/geoserver/msg_iodc/ir108/ows'
@@ -116,7 +116,7 @@ await downloader.downloadToFile(
 ### Run the Example
 
 ```bash
-tsx wms-downloader/example.ts
+tsx fetchers/wms-downloader/example.ts
 ```
 
 This will demonstrate:
@@ -124,7 +124,7 @@ This will demonstrate:
 - Downloading global and regional views
 - Saving images to the `wms-downloads/` directory
 
-See [wms-downloader/README.md](wms-downloader/README.md) for complete documentation.
+See [fetchers/wms-downloader/README.md](fetchers/wms-downloader/README.md) for complete documentation.
 
 ## Directory Structure
 
@@ -137,11 +137,13 @@ meteo-cyclone-animation/
 ├── tsconfig.json           # TypeScript configuration
 ├── images.json             # Generated index (created by script)
 ├── fetch.log               # Cron execution log
-├── wms-downloader/         # WMS download library
-│   ├── index.ts            # Main library file
-│   ├── example.ts          # Example usage
-│   ├── package.json        # Library package info
-│   └── README.md           # Library documentation
+├── fetchers/               # Data fetching scripts
+│   ├── wms-downloader/     # WMS download library
+│   │   ├── index.ts        # Main library file
+│   │   ├── example.ts      # Example usage
+│   │   ├── package.json    # Library package info
+│   │   └── README.md       # Library documentation
+│   └── ...
 ├── node_modules/           # Dependencies (after npm install)
 └── images/                 # Image storage (created by script)
     ├── 2026-01-14/

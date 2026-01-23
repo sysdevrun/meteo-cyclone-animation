@@ -10,8 +10,8 @@ cyclones.re/
 ├── fetchers/               # Data fetching scripts
 │   ├── fetch_cmrs_image.ts      # Fetches trajectory images from CMRS
 │   ├── fetch_meteofrance_api.ts # Fetches cyclone data from Meteo France API
-│   └── fetch_satellite.ts       # Fetches satellite images from EUMETSAT WMS
-├── wms-downloader/         # WMS download library (used by fetchers)
+│   ├── fetch_satellite.ts       # Fetches satellite images from EUMETSAT WMS
+│   └── wms-downloader/          # WMS download library
 ├── nginx/                  # Nginx configuration
 ├── data/                   # Fetched data (gitignored)
 └── setup_cron.sh           # Cron job setup script

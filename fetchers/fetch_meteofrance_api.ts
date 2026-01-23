@@ -13,7 +13,7 @@ import {
   ApiData,
   SatelliteImage,
 } from './src/index.js';
-import { WMSDownloader } from '../wms-downloader/index';
+import { WMSDownloader } from './wms-downloader/index';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

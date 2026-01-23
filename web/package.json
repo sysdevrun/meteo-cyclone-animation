@@ -7,9 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext ts,tsx",
-    "fetch": "tsx fetch_image.ts",
-    "wms-example": "tsx wms-downloader/example.ts"
+    "lint": "eslint src --ext ts,tsx"
   },
   "keywords": [
     "weather",

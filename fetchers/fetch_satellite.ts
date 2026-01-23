@@ -19,7 +19,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import proj4 from 'proj4';
-import { WMSDownloader } from '../wms-downloader/index';
+import { WMSDownloader } from './wms-downloader/index';
 import type { SatelliteImageEntry, SatelliteMetadata, SatelliteFetchConfig } from './src/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -236,7 +236,7 @@ interface WMSCapabilities {
 
 ## Examples
 
-See `wms-downloader/example.ts` for more examples.
+See `example.ts` in this directory for more examples.
 
 ## Error Handling
 

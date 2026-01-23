@@ -9,7 +9,7 @@
  * 3. Download map images
  * 4. Save images to files
  *
- * Run with: tsx wms-downloader/example.ts
+ * Run with: tsx fetchers/wms-downloader/example.ts
  */
 
 import { WMSDownloader } from './index';
