@@ -9,6 +9,9 @@ images.json
 
 # Node.js
 node_modules/
+
+# Vite cache
+.vite/
 yarn.lock
 pnpm-lock.yaml
 

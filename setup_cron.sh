@@ -2,8 +2,8 @@
 
 # Get the absolute path of the script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-IMAGE_FETCH_SCRIPT="$SCRIPT_DIR/fetchers/fetch_image.ts"
-API_FETCH_SCRIPT="$SCRIPT_DIR/fetchers/fetch_api.ts"
+IMAGE_FETCH_SCRIPT="$SCRIPT_DIR/fetchers/fetch_cmrs_image.ts"
+API_FETCH_SCRIPT="$SCRIPT_DIR/fetchers/fetch_meteofrance_api.ts"
 BACKUP_SCRIPT="$SCRIPT_DIR/fetchers/backup_to_s3.sh"
 
 # Node.js 22 paths (explicit for cron compatibility)
