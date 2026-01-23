@@ -35,6 +35,40 @@ src/
 3. Satellite images (IR108, RGB) are loaded as Leaflet overlays
 4. `useAnimation` handles playback through historical snapshots
 
+## Satellite Image Positioning
+
+Satellite images are geo-referenced using a bounding box and displayed as Leaflet `ImageOverlay` layers.
+
+### Data Structure
+
+Each satellite image in `api_data.json` has:
+```typescript
+interface SatelliteImageData {
+  file: string;                              // Path to image file
+  bbox: [number, number, number, number];    // [minLon, minLat, maxLon, maxLat]
+}
+```
+
+### Rendering Pipeline
+
+1. **URL Construction** (`utils/api.ts`): `getSatelliteImageUrl(filePath)` builds the full image URL
+2. **Bounds Conversion** (`utils/api.ts`): `bboxToLeafletBounds(bbox)` converts the bbox array to Leaflet format `[[minLat, minLon], [maxLat, maxLon]]`
+3. **Map Overlay** (`CycloneMap.tsx`): The image is rendered using react-leaflet's `ImageOverlay`:
+   ```tsx
+   <ImageOverlay
+     url={getSatelliteImageUrl(ir108Data.file)}
+     bounds={bboxToLeafletBounds(ir108Data.bbox)}
+     opacity={0.7}
+     zIndex={1}
+   />
+   ```
+
+### Layer Order
+
+- IR108 (infrared): zIndex 1 (bottom satellite layer)
+- RGB Natural Enhanced: zIndex 2 (top satellite layer)
+- Both render below trajectory lines and markers
+
 ## Development
 
 ```bash
