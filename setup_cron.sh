@@ -2,9 +2,9 @@
 
 # Get the absolute path of the script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-IMAGE_FETCH_SCRIPT="$SCRIPT_DIR/fetch_image.ts"
-API_FETCH_SCRIPT="$SCRIPT_DIR/meteo-france-api/fetch_api.ts"
-BACKUP_SCRIPT="$SCRIPT_DIR/meteo-france-api/backup_to_s3.sh"
+IMAGE_FETCH_SCRIPT="$SCRIPT_DIR/fetchers/fetch_image.ts"
+API_FETCH_SCRIPT="$SCRIPT_DIR/fetchers/fetch_api.ts"
+BACKUP_SCRIPT="$SCRIPT_DIR/fetchers/backup_to_s3.sh"
 
 # Node.js 22 paths (explicit for cron compatibility)
 NODE_PATH="/home/chtitux/.nvm/versions/node/v22.18.0/bin/node"
@@ -32,8 +32,8 @@ chmod +x "$API_FETCH_SCRIPT"
 
 # Cron jobs definitions (using explicit Node.js 22 paths for cron compatibility)
 IMAGE_CRON_JOB="0 * * * * $NODE_PATH $NPX_PATH tsx $IMAGE_FETCH_SCRIPT >> $SCRIPT_DIR/fetch.log 2>&1"
-API_CRON_JOB="0 * * * * cd $SCRIPT_DIR/meteo-france-api && $NODE_PATH $NPX_PATH tsx $API_FETCH_SCRIPT >> $SCRIPT_DIR/meteo-france-api/fetch_api.log 2>&1"
-BACKUP_CRON_JOB="5 * * * * $BACKUP_SCRIPT >> $SCRIPT_DIR/meteo-france-api/backup.log 2>&1"
+API_CRON_JOB="0 * * * * cd $SCRIPT_DIR/fetchers && $NODE_PATH $NPX_PATH tsx $API_FETCH_SCRIPT >> $SCRIPT_DIR/fetchers/fetch_api.log 2>&1"
+BACKUP_CRON_JOB="5 * * * * $BACKUP_SCRIPT >> $SCRIPT_DIR/fetchers/backup.log 2>&1"
 
 # Setup image fetch cron job
 echo ""
@@ -56,7 +56,7 @@ if crontab -l 2>/dev/null | grep -F "$API_FETCH_SCRIPT" >/dev/null 2>&1; then
 else
     (crontab -l 2>/dev/null; echo "$API_CRON_JOB") | crontab -
     echo "API fetch cron job added successfully!"
-    echo "Logs: $SCRIPT_DIR/meteo-france-api/fetch_api.log"
+    echo "Logs: $SCRIPT_DIR/fetchers/fetch_api.log"
 fi
 
 # Setup S3 backup cron job
@@ -68,7 +68,7 @@ if crontab -l 2>/dev/null | grep -F "$BACKUP_SCRIPT" >/dev/null 2>&1; then
 else
     (crontab -l 2>/dev/null; echo "$BACKUP_CRON_JOB") | crontab -
     echo "S3 backup cron job added successfully!"
-    echo "Logs: $SCRIPT_DIR/meteo-france-api/backup.log"
+    echo "Logs: $SCRIPT_DIR/fetchers/backup.log"
 fi
 
 echo ""
@@ -84,7 +84,7 @@ echo "=== Testing Image Fetch ==="
 cd "$SCRIPT_DIR" && "$NODE_PATH" "$NPX_PATH" tsx "$IMAGE_FETCH_SCRIPT"
 echo ""
 echo "=== Testing API Fetch ==="
-cd "$SCRIPT_DIR/meteo-france-api" && "$NODE_PATH" "$NPX_PATH" tsx "$API_FETCH_SCRIPT"
+cd "$SCRIPT_DIR/fetchers" && "$NODE_PATH" "$NPX_PATH" tsx "$API_FETCH_SCRIPT"
 echo ""
 echo "=== Testing S3 Backup ==="
 "$BACKUP_SCRIPT"
