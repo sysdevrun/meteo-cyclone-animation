@@ -4,7 +4,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IMAGE_FETCH_SCRIPT="$SCRIPT_DIR/fetchers/fetch_cmrs_image.ts"
 API_FETCH_SCRIPT="$SCRIPT_DIR/fetchers/fetch_meteofrance_api.ts"
-BACKUP_SCRIPT="$SCRIPT_DIR/fetchers/backup_to_s3.sh"
+BACKUP_SCRIPT="$SCRIPT_DIR/fetchers/backup/backup_to_s3.sh"
 
 # Node.js 22 paths (explicit for cron compatibility)
 NODE_PATH="/home/chtitux/.nvm/versions/node/v22.18.0/bin/node"

@@ -7,6 +7,8 @@ set -e
 export AWS_PROFILE="cyclones-backup"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+DATA_DIR="$PROJECT_ROOT/web/public/data"
 BUCKET_NAME="cyclones-re-backup"
 REGION="eu-west-3"
 
@@ -33,49 +35,15 @@ if ! aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
     exit 1
 fi
 
-# Backup api_data.json
-echo "=== Backing up api_data.json ==="
-if [ -f "$SCRIPT_DIR/api_data.json" ]; then
-    aws s3 cp "$SCRIPT_DIR/api_data.json" "s3://$BUCKET_NAME/api_data.json" \
-        --region "$REGION"
-    echo "Uploaded api_data.json"
-else
-    echo "Warning: api_data.json not found, skipping"
-fi
-
-# Backup satellite_metadata.json
-echo ""
-echo "=== Backing up satellite_metadata.json ==="
-if [ -f "$SCRIPT_DIR/satellite_metadata.json" ]; then
-    aws s3 cp "$SCRIPT_DIR/satellite_metadata.json" "s3://$BUCKET_NAME/satellite_metadata.json" \
-        --region "$REGION"
-    echo "Uploaded satellite_metadata.json"
-else
-    echo "Warning: satellite_metadata.json not found, skipping"
-fi
-
-# Sync data directory
-echo ""
+# Sync entire data directory (contains all data files)
 echo "=== Syncing data/ directory ==="
-if [ -d "$SCRIPT_DIR/data" ]; then
-    aws s3 sync "$SCRIPT_DIR/data/" "s3://$BUCKET_NAME/data/" \
+if [ -d "$DATA_DIR" ]; then
+    aws s3 sync "$DATA_DIR/" "s3://$BUCKET_NAME/data/" \
         --region "$REGION" \
         --delete
-    echo "Synced data/ directory"
+    echo "Synced $DATA_DIR to s3://$BUCKET_NAME/data/"
 else
-    echo "Warning: data/ directory not found, skipping"
-fi
-
-# Sync satellite_images directory
-echo ""
-echo "=== Syncing satellite_images/ directory ==="
-if [ -d "$SCRIPT_DIR/satellite_images" ]; then
-    aws s3 sync "$SCRIPT_DIR/satellite_images/" "s3://$BUCKET_NAME/satellite_images/" \
-        --region "$REGION" \
-        --delete
-    echo "Synced satellite_images/ directory"
-else
-    echo "Warning: satellite_images/ directory not found, skipping"
+    echo "Warning: $DATA_DIR not found, skipping"
 fi
 
 echo ""
